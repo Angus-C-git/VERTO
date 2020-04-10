@@ -1,9 +1,8 @@
-# obj-m += helloworld.o
 ccflags-y = -std=gnu99
 
-obj-m += verto.o
+obj-m += verto_root.o
 
-verto-objs := primary_routines/main.o primary_routines/exit.o
+verto_root-objs := main.o
 
 all:
 

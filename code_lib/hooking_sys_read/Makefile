@@ -1,8 +1,8 @@
 ccflags-y = -std=gnu99
 
-obj-m += verto.o
+obj-m += verto_rootkit.o
 
-verto-objs := primary_routines/main.o
+verto_rootkit-objs := main.o
 
 all:
 

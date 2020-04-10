@@ -1,1 +1,0 @@
-cmd_/home/ghost/VERTO/verto.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/ghost/VERTO/verto.ko /home/ghost/VERTO/verto.o /home/ghost/VERTO/verto.mod.o ;  true

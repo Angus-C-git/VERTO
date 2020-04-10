@@ -1,8 +1,8 @@
-cmd_/home/ghost/VERTO/verto.mod.o := gcc -Wp,-MD,/home/ghost/VERTO/.verto.mod.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/7/include  -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Iubuntu/include  -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wimplicit-fallthrough -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -std=gnu99  -DKBUILD_BASENAME='"verto.mod"' -DKBUILD_MODNAME='"verto"' -DMODULE  -c -o /home/ghost/VERTO/verto.mod.o /home/ghost/VERTO/verto.mod.c
+cmd_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o := gcc -Wp,-MD,/home/ghost/VERTO/code_lib/hooking_sys_read/.verto_rootkit.mod.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/7/include  -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -Iubuntu/include  -include ./include/linux/compiler_types.h -D__KERNEL__ -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Wno-format-security -std=gnu89 -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -falign-jumps=1 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -DCONFIG_X86_X32_ABI -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1 -DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1 -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wimplicit-fallthrough -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -mrecord-mcount -mfentry -DCC_USING_FENTRY -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -std=gnu99  -DKBUILD_BASENAME='"verto_rootkit.mod"' -DKBUILD_MODNAME='"verto_rootkit"' -DMODULE  -c -o /home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o /home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.c
 
-source_/home/ghost/VERTO/verto.mod.o := /home/ghost/VERTO/verto.mod.c
+source_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o := /home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.c
 
-deps_/home/ghost/VERTO/verto.mod.o := \
+deps_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o := \
     $(wildcard include/config/module/unload.h) \
     $(wildcard include/config/retpoline.h) \
   include/linux/kconfig.h \
@@ -186,7 +186,6 @@ deps_/home/ghost/VERTO/verto.mod.o := \
     $(wildcard include/config/base/small.h) \
   include/linux/percpu-defs.h \
     $(wildcard include/config/debug/force/weak/per/cpu.h) \
-    $(wildcard include/config/virtualization.h) \
     $(wildcard include/config/amd/mem/encrypt.h) \
   arch/x86/include/asm/thread_info.h \
     $(wildcard include/config/vm86.h) \
@@ -680,6 +679,6 @@ deps_/home/ghost/VERTO/verto.mod.o := \
   include/linux/vermagic.h \
   include/generated/utsrelease.h \
 
-/home/ghost/VERTO/verto.mod.o: $(deps_/home/ghost/VERTO/verto.mod.o)
+/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o: $(deps_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o)
 
-$(deps_/home/ghost/VERTO/verto.mod.o):
+$(deps_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.mod.o):

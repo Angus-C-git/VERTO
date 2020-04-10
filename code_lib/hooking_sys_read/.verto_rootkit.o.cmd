@@ -1,0 +1,1 @@
+cmd_/home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.o := ld -m elf_x86_64  -z max-page-size=0x200000    -r -o /home/ghost/VERTO/code_lib/hooking_sys_read/verto_rootkit.o /home/ghost/VERTO/code_lib/hooking_sys_read/main.o
