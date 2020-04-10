@@ -18,7 +18,8 @@ MODULE_VERSION("1.0");
 unsigned long **SYS_CALL_TABLE;
 
 
-
+//Depricated methods as of kernel 5.03::-generic
+/*
 void EnablePageWriting(void){
 	write_cr0(read_cr0() & (~0x10000));
 
@@ -27,18 +28,30 @@ void DisablePageWriting(void){
 	write_cr0(read_cr0() | 0x10000);
 
 } 
+*/
 
-// bool StartsWith(const char *a, const char *b)
-// 	{
-// 		if(strncmp(a, b, strlen(b)) == 0) return 1;
-// 		return 0;
-// 	}
+void EnablePageWriting(unsigned long address){
+	unsigned int level;
+	pte_t *pte = lookup_address(address, &level);
+
+	if(pte->pte &~ _PAGE_RW){
+		pte->pte |= _PAGE_RW;
+	}
+}
+
+void DisablePageWriting(unsigned long address){
+	unsigned int level;
+
+	pte_t *pte = lookup_address(address, &level);
+
+	pte->pte = pte->pte &~ _PAGE_RW;
+
+} 
+
 
 
 //pointer to the normal sysCall_open
 asmlinkage int ( *original_open ) (int dirfd, const char *pathname, int flags); 
-
-
 
 
 
@@ -63,7 +76,7 @@ asmlinkage int	HookOpen(int dirfd, const char *pathname, int flags){
 
     //Only triggers on open of our selected file
 	if (strcmp(OurFile , directory ) == 0 ){
-		printk(KERN_INFO "File Accessed!!! %s", directory);
+		printk(KERN_INFO "File Accessed %s", directory);
 	}
 
 	memset(directory, 0, 255);
@@ -86,12 +99,12 @@ static int __init SetHooks(void) {
 	printk(KERN_INFO "System call table at %p\n", SYS_CALL_TABLE);
 
   // Opens the memory pages to be written
-	EnablePageWriting();
+	EnablePageWriting((unsigned long )SYS_CALL_TABLE);
 
   // Replaces Pointer Of Syscall_open on our syscall.
 	original_open = (void*)SYS_CALL_TABLE[__NR_openat]; //Open syscall is called 'openat'
 	SYS_CALL_TABLE[__NR_openat] = (unsigned long*)HookOpen;
-	DisablePageWriting();
+	DisablePageWriting((unsigned long )SYS_CALL_TABLE);
 
 	return 0;
 }
@@ -105,9 +118,9 @@ static int __init SetHooks(void) {
 static void __exit HookCleanup(void) {
 
 	// Clean up our Hooks
-	EnablePageWriting();
+	EnablePageWriting((unsigned long )SYS_CALL_TABLE);
 	SYS_CALL_TABLE[__NR_openat] = (unsigned long*)original_open;
-	DisablePageWriting();
+	DisablePageWriting((unsigned long )SYS_CALL_TABLE);
 
 	printk(KERN_INFO "HooksCleaned Up!");
 }

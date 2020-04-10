@@ -1,1 +1,0 @@
-cmd_/home/dev/VERTO/code_lib/hooking_sys_read/verto.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/dev/VERTO/code_lib/hooking_sys_read/verto.ko /home/dev/VERTO/code_lib/hooking_sys_read/verto.o /home/dev/VERTO/code_lib/hooking_sys_read/verto.mod.o ;  true

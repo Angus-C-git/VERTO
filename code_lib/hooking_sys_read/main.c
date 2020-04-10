@@ -41,7 +41,7 @@ void DisablePageWriting(void){
 
 */
 
-//Patch for newer kernel
+//Patch for newer kernel -> up to 5.03.0-42 
 void EnablePageWriting(unsigned long address){
 	unsigned int level;
 	pte_t *pte = lookup_address(address, &level);
@@ -67,7 +67,7 @@ asmlinkage int (*original_read)(unsigned int, void __user*, size_t); //Normal re
 //Modified Read function
 
 asmlinkage int  HookRead(unsigned int fd, void __user* buf, size_t count) { 
-	printk(KERN_INFO "READ HERE"); 
+	printk(KERN_INFO "READ DETECTED"); 
 	return (*original_read)(fd, buf, count); //Return to original read
 }
 
@@ -108,7 +108,7 @@ static void __exit HookCleanup(void) {
 	SYS_CALL_TABLE[__NR_read] = (unsigned long*)original_read;
 	DisablePageWriting( (unsigned long) SYS_CALL_TABLE );
 
-	printk(KERN_INFO "HooksCleaned Up!");
+	printk(KERN_INFO "Cleaned Hooks");
 }
 
 module_init(SetHooks);

