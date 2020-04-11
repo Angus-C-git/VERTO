@@ -4,6 +4,7 @@
 #include <linux/init.h> //macros
 #include <linux/module.h> 
 #include <linux/kernel.h> //Kernel functions
+#include <linux/stat.h>
 
 //System call table headers and functions (& Others)
 
