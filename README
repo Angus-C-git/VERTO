@@ -1,4 +1,4 @@
-                                                                ~ ABOUT ~
+                                                           ~ ABOUT ~
 
 A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
@@ -15,7 +15,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
     $ sudo rmmod module_name
 
 
-                                                    ~ DEPLOYMENT OF PAYLOAD & SERVER ~
+                                                  ~ DEPLOYMENT OF PAYLOAD & SERVER ~
 
 ~ both scripts are basic *see NOTES
 
@@ -42,7 +42,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
     -> will kill the connection client side for 1 hour
 
-                                                                ~ NOTES ~
+                                                            ~ NOTES ~
 
 Tested on: Linux Mint Kernel 4.15.0-54-generic
 
