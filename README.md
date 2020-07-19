@@ -3,19 +3,19 @@
 A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 
-                                            ~ COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES ~
+                                ~ COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES ~
 
 + modules (I.E sections in the code_lib) are compiled with their associated Makefile (gcc) 
-    $ make clean && make all
+    `$ make clean && make all`
 
 + moudles are executed via the produced .ko file, output by the Makefile, using the insmod command
-    $ sudo insmod module_name.ko
+    `$ sudo insmod module_name.ko`
 
 + modules are removed via the rmmod command which only requires the module name
-    $ sudo rmmod module_name
+    `$ sudo rmmod module_name`
 
 
-                                                  ~ DEPLOYMENT OF PAYLOAD & SERVER ~
+                                        ~ DEPLOYMENT OF PAYLOAD & SERVER ~
 
 ~ both scripts are basic *see NOTES
 
@@ -42,7 +42,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
     -> will kill the connection client side for 1 hour
 
-                                                            ~ NOTES ~
+                                                       ~ NOTES ~
 
 Tested on: Linux Mint Kernel 4.15.0-54-generic
 
