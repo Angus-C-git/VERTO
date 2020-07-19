@@ -3,7 +3,7 @@
 A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 
-                                ~ COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES ~
+# COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES
 
 + modules (I.E sections in the code_lib) are compiled with their associated Makefile (gcc) 
     + `$ make clean && make all`
@@ -15,7 +15,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
     + `$ sudo rmmod module_name`
 
 
-                                ~ DEPLOYMENT OF PAYLOAD & SERVER ~
+# DEPLOYMENT OF PAYLOAD & SERVER
 
 ~ both scripts are basic *see NOTES
 
@@ -42,14 +42,14 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
     -> will kill the connection client side for 1 hour
 
-                                ~ NOTES ~
+# NOTES
 
 Tested on: Linux Mint Kernel 4.15.0-54-generic
 
 1. All inturupts have been modified to work on newer kernels (which should be backwards compatable, hence they also work on this build and newer builds up to 5.03.42 atleast. Builds failed on Kernel 5.03.46.
-    a. The unmodified versions of the intrupts which do not negate CR04 pinning 
+    1. The unmodified versions of the intrupts which do not negate CR04 pinning 
        issues are included for refrence
 
 2. The included 'payload' (fn2187.py) is a crude implementation of a reverse shell with limited survivability purposes used to demo the rootkits features
-    a. the server for the payload is 'server.py' and is a similarly crude (somewhat broken) template for the payload
-    b. the payload should be run as root
+    1. the server for the payload is 'server.py' and is a similarly crude (somewhat broken) template for the payload
+    2. the payload should be run as root
