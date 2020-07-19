@@ -1,17 +1,17 @@
-                                                           ~ ABOUT ~
+# ABOUT
 
 A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 
                                             ~ COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES ~
 
-~ modules (I.E sections in the code_lib) are compiled with their associated Makefile (gcc) 
++ modules (I.E sections in the code_lib) are compiled with their associated Makefile (gcc) 
     $ make clean && make all
 
-~ moudles are executed via the produced .ko file, output by the Makefile, using the insmod command
++ moudles are executed via the produced .ko file, output by the Makefile, using the insmod command
     $ sudo insmod module_name.ko
 
-~ modules are removed via the rmmod command which only requires the module name
++ modules are removed via the rmmod command which only requires the module name
     $ sudo rmmod module_name
 
 
@@ -19,26 +19,26 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 ~ both scripts are basic *see NOTES
 
-~ The payload script ('fn2187.py') should be run as root in the background on the target system initally, it attempts to persist over restarts by adding a crontab to execute it on startup
++ The payload script ('fn2187.py') should be run as root in the background on the target system initally, it attempts to persist over restarts by adding a crontab to execute it on startup
     $ sudo python3 fn2187.py &
     -> close terminal
 
-~ The server script ('server.py) is run on the attackers machine 
-    $ python3 server.py
++ The server script ('server.py) is run on the attackers machine 
+    `$ python3 server.py`
+    
++ Note because the two scripts are basic some commands when executed incorrectly over the shell will cause it to die svr side (sometimes client side)
++ This can be resloved in most cases by killing the server program & freeing the socket it was binding & then restarting the server, which should reconect with the payloads recovery functions
 
-    ~ Note because the two scripts are basic some commands when executed incorrectly over the shell will cause it to die svr side (sometimes client side)
-    ~ This can be resloved in most cases by killing the server program & freeing the socket it was binding & then restarting the server, which should reconect with the payloads recovery functions
-
-~ The payload script accepts 3 special commands outside of normal bash calls (commands specific to these scripts)
++ The payload script accepts 3 special commands outside of normal bash calls (commands specific to these scripts)
     $ drop_kit
 
     -> will deploy the rootkit if its kernel object file (.ko) exists in the /home/usr_name/Template directory
 
-    $ n_sleep
+    `$ n_sleep`
 
     -> will kill the connection client side for 300 seconds
 
-    $ l_sleep 
+    `$ l_sleep` 
 
     -> will kill the connection client side for 1 hour
 
