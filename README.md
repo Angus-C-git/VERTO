@@ -20,8 +20,8 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 ~ both scripts are basic *see NOTES
 
 + The payload script ('fn2187.py') should be run as root in the background on the target system initally, it attempts to persist over restarts by adding a crontab to execute it on startup
-    $ sudo python3 fn2187.py &
-    -> close terminal
+    + `$ sudo python3 fn2187.py &`
+    + close terminal
 
 + The server script ('server.py) is run on the attackers machine 
     `$ python3 server.py`
