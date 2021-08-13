@@ -17,7 +17,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 # Sample Malware
 
-*Note: both scripts are extreemly basic POCs *see [notes](#notes) *
+*Note: both scripts are extreemly basic POCs see [notes](#notes)*
 
 + The payload script ('fn2187.py') should be run as root in the background on the target system initally, it attempts to persist over restarts by adding a crontab to execute it on startup
     + `$ sudo python3 fn2187.py &`
