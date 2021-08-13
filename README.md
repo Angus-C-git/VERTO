@@ -1,9 +1,9 @@
-# ABOUT
+# About
 
 A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
 
-# COMPILING & DEPLOYMENT OF VERTO ROOTKIT & MODULES
+# Compiling and Deployment of VERTO rootkit
 
 + modules (I.E sections in the code_lib) are compiled with their associated Makefile (gcc) 
     + `$ make clean && make all`
@@ -15,9 +15,9 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
     + `$ sudo rmmod module_name`
 
 
-# DEPLOYMENT OF PAYLOAD & SERVER
+# Sample Malware
 
-~ both scripts are basic *see NOTES
+*Note: both scripts are extreemly basic POCs *see [notes](#notes) *
 
 + The payload script ('fn2187.py') should be run as root in the background on the target system initally, it attempts to persist over restarts by adding a crontab to execute it on startup
     + `$ sudo python3 fn2187.py &`
@@ -42,7 +42,7 @@ A kernel mode rootkit for Linux Kernel 5.03.42 and lower.
 
     -> will kill the connection client side for 1 hour
 
-# NOTES
+# Notes
 
 Tested on: Linux Mint Kernel 4.15.0-54-generic
 
