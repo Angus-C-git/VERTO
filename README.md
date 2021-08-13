@@ -50,6 +50,7 @@ Tested on: Linux Mint Kernel 4.15.0-54-generic
     1. The unmodified versions of the intrupts which do not negate CR04 pinning 
        issues are included for refrence
 
-2. The included 'payload' (fn2187.py) is a crude implementation of a reverse shell with limited survivability purposes used to demo the rootkits features
+2. The included 'payload' (fn2187.py) is a crude implementation of a reverse shell with limited survivability used to demo the rootkits features
     1. the server for the payload is 'server.py' and is a similarly crude (somewhat broken) template for the payload
     2. the payload should be run as root
+3. Real maleware deployed with a rootkit like VERTO would likely be written in C so as to be a discreet module that can be properly executed in the background
